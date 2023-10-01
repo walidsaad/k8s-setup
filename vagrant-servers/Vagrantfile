@@ -8,7 +8,7 @@ nodes = [
   #{ :hostname => 'bastion',   :ip => '10.0.0.13', :id => '13' },
 ]
 
-memory = 2500
+memory = 8192
 
 $script = <<SCRIPT
 sudo mv hosts /etc/hosts
@@ -16,10 +16,13 @@ chmod 0600 /home/vagrant/.ssh/id_rsa
 usermod -a -G vagrant ubuntu
 cp -Rvf /home/vagrant/.ssh /home/ubuntu
 chown -Rvf ubuntu /home/ubuntu
-apt-get -y update
-apt-get -y install python-minimal python-apt
-sudo apt install software-properties-common -y
-sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt -y update
+#apt-get -y install python-minimal python-apt
+#sudo apt install software-properties-common -y
+#sudo apt-add-repository --yes --update ppa:ansible/ansible
+#sudo apt install ansible -y
+sudo apt-add-repository ppa:ansible/ansible --yes
+sudo apt update -y
 sudo apt install ansible -y
 SCRIPT
 
@@ -27,7 +30,7 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
   nodes.each do |node|
     config.vm.define node[:hostname] do |nodeconfig|
-      nodeconfig.vm.box = "ubuntu/xenial64"
+      nodeconfig.vm.box = "ubuntu/focal64"
       nodeconfig.vm.hostname = node[:hostname]
       nodeconfig.vm.network :private_network, ip: node[:ip]
       nodeconfig.vm.provider :virtualbox do |vb|

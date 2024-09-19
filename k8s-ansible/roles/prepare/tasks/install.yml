@@ -1,12 +1,12 @@
-- shell: "apt -y update && apt install -y apt-transport-https && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add"
+- shell: "mkdir -m 755 -p /etc/apt/keyrings && apt-get update -y && apt-get install -y apt-transport-https ca-certificates curl gpg -y && curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg"
 - apt_repository:
-    repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
+    repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /'
     state: present
 - name: install docker and kubernetes
   apt: name={{ item }} state=present allow_unauthenticated=yes
   with_items:
     - docker.io
-    - kubelet=1.26.0-00
-    - kubeadm=1.26.0-00
-    - kubectl=1.26.0-00
+    - kubelet
+    - kubeadm
+    - kubectl
     - ntp
